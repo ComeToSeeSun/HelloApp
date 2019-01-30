@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>title</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <style>
+      header {
+       width: 100%;
+       height: 130px;
+       box-sizing: border-box;
+       padding: 4px 10px;
+      }
+   header .banner {
+       width: 100%;
+       height: 100%;
+   }
+   section {
+       position: relative;
+       width: 100%;
+       height: auto;
+       box-sizing: border-box;
+       padding: 0 8px;
+   }
+   .content {
+       width: 100%;
+       height: 100%;
+   }
+
+   .ware {
+     position: relative;
+     width: 100%;
+     height: 145px;
+     box-sizing: border-box;
+     padding-top: 15px;
+     padding-bottom: 15px;
+     border-bottom: 1px solid #dldldl;
+   }
+
+   .ware .thumbnail {
+     position: absolute;
+     top: 20px;
+     left: 0px;
+     height: 100px;
+     width: 100px;
+   }
+
+   .ware .info {
+     width: 100%;
+     height: 114px;
+     box-sizing: border-box;
+     padding-left: 112px;
+     padding-right: 28px;
+   }
+
+   .ware .info .name {
+     width: 100%;
+     height: 15px;
+     color: #555555;
+     margin-top: 14px;
+     font-size: 15px;
+   }
+
+   .ware .info .description {
+     margin-top: 10px;
+     width:100%;
+     height: 13px;
+     font-size: 13px;
+     color: #9d9d9d;
+   }
+
+   .ware .info .price-tag {
+     margin-top: 10px;
+     width: 100%;
+     height: 12px;
+     font-size: 12px;
+     vertical-align: top;
+   }
+
+   .ware .info .price-tag .price {
+     color: #e3007f;
+   }
+
+   .ware .info .price-tag .unit {
+     font-size: 8px;
+     color: #cbcbcb;
+   }
+
+   .ware .info .origin-price {
+     margin-top: 5px;
+     width: 100%;
+     height: 10px;
+     font-size: 10px;
+     color: #d3d3d3;
+   }
+
+   .ware .control {
+       position: absolute;
+       width: 110px;
+       height: 23px;
+       right: 8px;
+       top: 90px;
+   }
+
+   .ware .control .add {
+       position: absolute;
+       top: 0;
+       right: 0;
+       width: 23px;
+       height: 23px;
+       z-index: 2;
+   }
+   .push-status {
+       width: 100%;
+       height: 40px;
+       font-size: 16px;
+       color: #888;
+       line-height: 40px;
+       text-align: center;
+       background-color: #fff;
+   }
+   .active {
+       opacity: 0.7;
+   }
+          body{
+          }
+      </style>
+  </head>
+  <body>
+    <header id="header">
+      <img id="banner" class="banner" src="../image/default_rect.png">
+    </header>
+    <section id="list">
+      <div class="ware">
+        <div class="content">
+          <img class="thumbnail" src="../image/default_square.png">
+          <div class="info">
+            <div class="name">name</div>
+            <div class="description">description</div>
+            <div class="price-tag">
+              <span class="price">￥100</span>
+              <span class="unit">/kg</span>
+            </div>
+            <div class="origin-price">超市:
+              <del>￥110</del>
+            </div>
+          </div>
+          <div class="control">
+            <img class="add" src="../image/add.png">
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="push-status" id="push-status">上拉显示更多</div>
+
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/doT.min.js"></script>
+  <script type="text/javascript" src="../script/SHA1.js"></script>
+  <script type="text/javascript">
+      apiready = function(){
+        //现在获取商品列表数据
+        var params = {
+          fields: {},
+          where: {
+            supportAreaId: "56c80e0c789b068408ab5a6f",
+            wareTypeId: api.pageParam.wareTypeId
+          },
+          skip: 0,
+          limit: 5
+        };
+        var now = Date.now();
+        var appKey = SHA1("A6921544633372"+"UZ"+"8A7453BA-7B2C-93DE-135A-9D69DDBCDB63"+"UZ"+now)+"."+now;
+        api.ajax({
+            url: 'https://d.apicloud.com/mcm/api/ware?filter=' +  $api.jsonToStr(params),
+            method: 'get',
+            headers: {
+              "X-APICloud-AppId": "A6921544633372",  //A6092080221639
+              "X-APICloud-AppKey": "2672b5911d8551540c1ea598e01c87fee217a1e5.1482500122476"   //调用其他应用的数据库商品 "2672b5911d8551540c1ea598e01c87fee217a1e5.1482500122476"
+            }},
+              function(ret, err){
+            if (ret) {
+                console.log($api.jsonToStr(ret));    //控制台显示商品数据
+                var list = $api.byId('list');
+                list.innerHTML = "";
+                for(var i in ret){
+                  var ware = ret[i];
+                  $api.append(     //一开始漏了 符号$
+                    list,
+                    '\
+                    <div class= "ware">\
+                    <div class="content">\
+                    <img class="thumbnail" src="' + ware.thumbnail + '">\
+                    <div class="info">\
+                    <div class="name">' + ware.name +'</div>\
+                    <div class="description">' + ware.description + '</div>\
+                    <div class="price-tag">\
+                    <span class="price">￥' + ware.price + '</span>\
+                    <span class="unit">/kg</span>\
+                    </div>\
+                    <div class="origin-price">超市:\
+                    <del>￥' + ware.originPrice + '</del>\
+                    </div>\
+                    </div>\
+                    <div class="control">\
+                    <img class="add" src="..image/add.png">\
+                    </div>\
+                    </div>\
+                    </div>\
+                    ');
+                }
+            }
+            else {
+              alert( JSON.stringify( err ) );
+            }
+        })
+      };;    // ; 的使用是个问题
+  </script>
+
+  </html>

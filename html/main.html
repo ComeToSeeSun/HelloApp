@@ -1,0 +1,302 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+    <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css" />
+    <style>
+        label {
+            margin: 10px;
+            font-size: 24px;
+        }
+
+        ul {
+            margin-bottom: 10px;
+        }
+
+        ul li {
+            margin: 5px 10px;
+            padding: 5px;
+            color: #000;
+            word-wrap: break-word;
+        }
+
+        //header的处理
+        header {
+          width: 100%;
+          height: 50px;
+          background-color: #e1017e;
+        }
+
+        header .left {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100px;
+          height: 50px;
+        }
+
+        header .left .arrow {
+          position: absolute;
+          bottom: 21px;
+          left: 11px;
+          width: 13px;
+          height: 8px;
+          background: url(../image/arrow_down.png);
+          background-size: 13px 8px;
+          background-position: center center;
+          background-repeat: no-repeat;
+          -webkit-transition: 200ms;
+          transition: 200ms;
+        }
+
+        header .left .arrow.active {
+          -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
+        }
+
+        header .left .city {
+          position: relative;
+          z-index: 2;
+          width: 100%;
+          height: 50px;
+          padding-left: 27px;
+          line-height: 50px;
+          font-size: 14px;
+          color: #fff;
+        }
+
+        header .center {
+          width: 100%;
+          height: 50px;
+          background: url(../image/top.jpeg);  //  home_title.png
+          background-size: 74px 19px;
+          background-position: center center;
+          background-repeat: no-repeat;
+        }
+
+        header .right {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          width: 40px;
+          height: 50px;
+          background: url(../image/home_membercenter.png);
+          background-size: 30px 30px;
+          background-position: center center;
+          background-repeat: no-repeat;
+        }
+
+        nav {
+          display: -webkit-box;
+          display: -webkit-box;
+          display: flex;
+          -webkit-box-orient: horizontal;
+          -webkit-flex-flow: row;
+          flex-flow: row;
+          position: relative;
+          height: 40px;
+          background-color: #e1017e;
+        }
+        nav .menu {
+          -webkit-box-flex: 1;
+          -webkit-flex: 1;
+          flex: 1;
+          height: 40px;
+          line-height: 40px;
+          font-size: 13px;
+          color: #f973b8;
+          text-align: center;
+        }
+        nav .menu.selected {
+          font-size: 14px;
+          color: #fff;
+          font-weight: bolder;
+        }
+
+    </style>
+</head>
+
+<body>
+  <header id="header">
+      <div class="left" tapmode onclick="fnOpenCitySelectorFrame()">
+        <div class="arrow" id="arrow"></div>
+        <div class="city" id="city">北京市</div>
+    </div>
+    <div class="center"></div>
+    <div class="right" tapmode onclick="fnOpenPersonalCenterWin()"></div>
+  </header>
+
+  <nav id="nav">
+    <div class="menu selected" tapmode onclick="fnSetNavMenuIndex(0);">水果</div>
+    <div class="menu" tapmode onclick="fnSetNavMenuIndex(1);">食材</div>
+    <div class="menu" tapmode onclick="fnSetNavMenuIndex(2);">零食</div>
+    <div class="menu" tapmode onclick="fnSetNavMenuIndex(3);">牛奶</div>
+    <div class="menu" tapmode onclick="fnSetNavMenuIndex(4);">蔬菜</div>
+  </nav>
+
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript">
+
+    function fnOpenCitySelectorFrame(){
+      //$api.fixStatusBar(header);
+      var header = $api.byId('header');
+      var headerH = $api.offset(header).h;
+      api.openFrame({
+        name: 'citySelectorFrame',
+        url: './cityselector_frame.html',
+        rect: {
+          x: 0,
+          y: header,
+          w: 'auto',
+          h: 'auto'
+        },
+        bgColor: 'rgba(0,0,0,0)'
+      });
+      $api.addCls($api.byId("arrow"),"active");
+    }
+
+    function fnOpenPersonalCenterWin(){
+      api.openWin({
+          name: 'personalcenter',
+          url: './login.html',
+      });
+    }
+
+    function fnSetNavMenuIndex(index_){
+      var menus = $api.domAll($api.byId("nav"), ".menu");
+      $api.addCls(menus[index_], 'selected');
+      api.setFrameGroupIndex({
+          name: 'mainFrameGroup',
+          index: index_,
+          scroll: true
+      });
+
+    //这段跳转代码属于自己添加
+      api.openFrame({
+          name: 'Detail',
+          url: './main_frame.html',
+     });
+   }
+    apiready = function() {
+    //  $api.fixStatusBar(
+  //      $api.byId('header');
+    //  );
+
+    //测试推送
+
+    api.addEventListener({
+        name: 'citySelected'
+    }, function(ret, err){
+        $api.removeCls($api.byId("arrow"), 'active');
+        $api.html($api.byId("city"),ret.value.cityName);
+        api.closeFrame({
+            name: 'citySelectorFrame'
+        });
+        'active';
+      $api.html(
+        $api.byId("city"),
+        ret.value.cityName
+        )
+      });
+
+
+
+    api.openFrame({
+        name: 'minicart_frame',
+        url: './minicart_frame.html',
+        rect: {
+            x: 0,
+            y: api.winHeight - 55,
+            w: 150,
+            h: 34
+        },
+        bounces: false    // 关闭弹动
+    });
+    api.bringFrameToFront({
+        from: 'minicart'
+    });      //购物悬浮窗
+
+
+    var frames = [];
+    for(var i = 0;i < 5; i++ ){
+      frames.push({
+        name: 'main_frame_' + i,
+        url: './main_frame.html',
+        pageParam: {
+          wareTypeIndex: i
+        }
+      });
+    }
+    frames[0].pageParam.wareTypeId = "56c80da883af652643474b6b";
+    frames[1].pageParam.wareTypeId = "56c80db78d04c83d3d1dedea";
+    frames[2].pageParam.wareTypeId = "56c80dc031da9e480de1cb49";
+    frames[3].pageParam.wareTypeId = "56c80dc383af652643474b6d";
+    frames[4].pageParam.wareTypeId = "56c80dc88d04c83d3d1dedf3";
+
+    var header = $api.byId("header");
+    var nav = $api.byId("nav");
+    var headerH = $api.offset(header).h;
+    var navH = $api.offset(nav).h;
+
+    api.openFrameGroup({
+      name: 'mainFrameGroup',
+      scrollEnabled: true,  //支持手势滑动
+      rect: {
+        x: 0,
+        y: headerH + navH,
+        w: 'auto',  //自动填充所在的Window的宽度
+        h: 'auto',  //自动填充所在Window的高度
+      },
+      index: 0,  //默认显示第一个Frame
+      frames: frames,
+      preload: frames.length  //预加载所有frameName
+    }, function(ret, err){
+      var menus = $api.domAll($api.byId("nav"), ".menu");
+      for(var i = 0;i < menus.length; i++){
+        $api.removeCls(menus[i], 'selected');
+      }
+      $api.addCls(menus[ret.index], 'selected');  //这里出现了细节问题 menus 一开始写成了menu
+    });
+
+
+
+        var ver = api.version;
+        var sType = api.systemType;
+        var sVer = api.systemVersion;
+        var id = api.deviceId;
+        var model = api.deviceModel;
+        var name = api.deviceName;
+        var cType = api.connectionType;
+        var winName = api.winName;
+        var winWidth = api.winWidth;
+        var winHeight = api.winHeight;
+        var frameName = api.frameName || '';
+        var frameWidth = api.frameWidth || '';
+        var frameHeight = api.frameHeight || '';
+
+        var str = '<ul>';
+        str += '<li>引擎版本信息: ' + ver + '</li>';
+        str += '<li>系统类型: ' + sType + '</li>';
+        str += '<li>系统版本: ' + sVer + '</li>';
+        str += '<li>设备标识: ' + id + '</li>';
+        str += '<li>设备型号: ' + model + '</li>';
+        str += '<li>设备名称: ' + name + '</li>';
+        str += '<li>网络状态: ' + cType + '</li>';
+        str += '<li>主窗口名字: ' + winName + '</li>';
+        str += '<li>主窗口宽度: ' + winWidth + '</li>';
+        str += '<li>主窗口高度: ' + winHeight + '</li>';
+        str += '<li>子窗口名字: ' + frameName + '</li>';
+        str += '<li>子窗口宽度: ' + frameWidth + '</li>';
+        str += '<li>子窗口高度: ' + frameHeight + '</li>';
+        str += '</ul>';
+
+        //$api.byId('sys-info').innerHTML = str;
+
+    };
+</script>
+
+</html>

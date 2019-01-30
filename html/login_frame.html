@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+      <title>登录Frame</title>
+      <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+      <style>
+          body{
+            text-align: center;
+          }
+          header {
+           width: 100%;
+           height: 130px;
+           box-sizing: border-box;
+           padding: 4px 10px;
+          }
+       header .banner {
+           width: 100%;
+           height: 100%;
+       }
+
+          .row {
+       width : auto ;
+       height : 70 px ;
+       box-sizing : border-box ;
+       margin-left : 32 px ;
+       margin-right : 32 px ;
+       padding-top : 40 px ;
+       border-bottom : 1 px  solid  #888 ;
+   }
+   .input {
+       width : 100 % ;
+       height : 20 px ;
+       border : none ;
+       outline : none ;
+       font-size : 16 px ;
+       line-height : 20 px ;
+   }
+   .btn {
+       width : auto ;
+       height : 50 px ;
+       margin-left : 32 px ;
+       margin-right : 32 px ;
+       margin-top : 32 px ;
+       background-color : #e3007f ;
+       line-height : 50 px ;
+       color : #fff ;
+       font-size : 24 px ;
+       text-align : center ;
+       border-radius : 8 px ;
+   }
+   .btn-third-party {
+       display : inline-block ;
+       width : auto ;
+       height : 50 px ;
+       box-sizing : border-box ;
+       margin-top : 32 px ;
+       margin-left : auto ;
+       margin-right : auto ;
+       padding : 8 px  8 px  8 px  36 px ;
+       font-size : 20 px ;
+       color : #888 ;
+       line-height : 32 px ;
+       text-align : left ;
+       border : 1 px  solid  #aaa ;
+       background-image : url ( ../image/share_friend.png );
+       background-repeat : no-repeat ;
+       background-size : auto  20 px ;
+       background-position : 8 px  center ;
+       border-radius : 8 px ;
+   }
+   .highlight {
+       opacity : 0.7 ;
+   }
+      </style>
+  </head>
+  <body>
+    <header id="header">
+      <img id="banner" class="banner" src="../image/default_rect.png">
+    </header>
+
+    <div class = "row" >
+       <input id = " username "  class = "input"  type = " text "  placeholder = "用户名" >
+    </div>
+    <div class = " row " >
+       <input id = "password" class = " input "  type = " password "  placeholder = "密码" >
+   </div >
+   <div class = " btn "  tapmode = " highlight "  onclick = " fnLogin(); " >登录</div >
+   <div class = " btn-third-party " >使用微信登录</div >
+
+  </body>
+  <script type="text/javascript" src="../script/api.js"></script>
+  <script type="text/javascript" src="../script/SHA1.js"></script>
+  <script type="text/javascript">
+
+  function fnLogin(){
+    var username = $api.byId("username");
+    var password = $api.byId("password");
+    var vusername = $api.val(username);
+    var vpassword = $api.val(password);
+
+    var now = Date.now();
+    var appKey = SHA1("A6092080221639"+"UZ"+"8A7453BA-7B2C-93DE-135A-9D69DDBCDB63"+"UZ"+now)+"."+now;
+
+    api.ajax({
+        url: 'http://d.apicloud.com/mcm/api/user/login',
+        method: 'post',
+        headers: {
+          "X-APICloud-AppId": "A6092080221639",
+          "X-APICloud-AppKey": appKey
+        },
+        data: {
+            values: {
+                username: vusername,
+                password: vpassword
+            }
+          }
+        },
+          function(ret, err){
+        if (ret && ret.userId) {
+            alert( "登录成功！" );
+        } else {
+            alert( "登录失败！" );
+        }
+    })
+  };
+
+      apiready = function(){
+      //  $api.fixStatusBar($api.byId('header'));
+
+    };
+  </script>
+  </html>
