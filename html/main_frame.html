@@ -155,6 +155,31 @@
     <div class="push-status" id="push-status">上拉显示更多</div>
 
   </body>
+
+  <script type="text/template" id="wareTemplate">   
+    {{~ it:ware:index }}
+    <div class="ware">
+      <div class="content">
+        <img class="thumbnail" src="{{= ware.thumbnail.url }}">
+        <div class ="info">
+          <div class="name">{{= ware.name }}</div>
+          <div class="description">{{= ware.description }}</div>
+          <div class="price-tag">
+            <span class="price">￥{{= ware.price }}</span>
+            <span class="unit">/{{= ware.unit }}</span>
+          </div>
+          <div class="origin-price">超市：
+            <del>￥{{= ware.originPrice }}</del>
+          </div>
+        </div>
+        <div class="control">
+          <img class="add" src="../image/add.png">
+        </div>
+      </div>
+    </div>
+    {{~}}
+  </script>
+
   <script type="text/javascript" src="../script/api.js"></script>
   <script type="text/javascript" src="../script/doT.min.js"></script>
   <script type="text/javascript" src="../script/SHA1.js"></script>
@@ -181,35 +206,13 @@
             }},
               function(ret, err){
             if (ret) {
-                console.log($api.jsonToStr(ret));    //控制台显示商品数据
-                var list = $api.byId('list');
-                list.innerHTML = "";
-                for(var i in ret){
-                  var ware = ret[i];
-                  $api.append(     //一开始漏了 符号$
-                    list,
-                    '\
-                    <div class= "ware">\
-                    <div class="content">\
-                    <img class="thumbnail" src="' + ware.thumbnail + '">\
-                    <div class="info">\
-                    <div class="name">' + ware.name +'</div>\
-                    <div class="description">' + ware.description + '</div>\
-                    <div class="price-tag">\
-                    <span class="price">￥' + ware.price + '</span>\
-                    <span class="unit">/kg</span>\
-                    </div>\
-                    <div class="origin-price">超市:\
-                    <del>￥' + ware.originPrice + '</del>\
-                    </div>\
-                    </div>\
-                    <div class="control">\
-                    <img class="add" src="..image/add.png">\
-                    </div>\
-                    </div>\
-                    </div>\
-                    ');
-                }
+              var strTemplate = $api.html(
+                $api.byId("wareTemplate")
+              );
+              var fnTemplate = doT.template(strTemplate);
+              strTemplate = fnTemplate(ret);
+              var list = $api.byId("list");
+              $api.html(list,strTemplate);
             }
             else {
               alert( JSON.stringify( err ) );
