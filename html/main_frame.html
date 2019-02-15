@@ -156,11 +156,12 @@
 
   </body>
 
-  <script type="text/template" id="wareTemplate">   
+  <script type="text/template" id="wareTemplate">
     {{~ it:ware:index }}
     <div class="ware">
       <div class="content">
-        <img class="thumbnail" src="{{= ware.thumbnail.url }}">
+        <!-- <img onload="fnLoadImage(this)" data-url="{{= ware.thumbnail.url }}" class="thumbnail" src="..image/default_rect.png"> -->
+         <img class="thumbnail" src="{{= ware.thumbnail.url }}">  
         <div class ="info">
           <div class="name">{{= ware.name }}</div>
           <div class="description">{{= ware.description }}</div>
@@ -185,6 +186,34 @@
   <script type="text/javascript" src="../script/SHA1.js"></script>
   <script type="text/javascript">
       apiready = function(){
+        fnLoadWares();
+        api.setRefreshHeaderInfo({
+          loadingImg:'widget://image/refresh.png',
+          bgColor: '#fff',
+          textColor: '#e1017e',
+          showTime: true
+        },function(ret,err) {
+          fnLoadWares();
+        });
+
+
+
+      };;    // ; 的使用是个问题
+
+      function fnLoadImage(ele_) {
+        var dataUrl = $api.attr(ele_,'data-url');
+        if (dataUrl) {
+          api.imageCache({
+            url: dataUrl
+          },function(ret,err) {
+            if(ret) {
+              ele_.src = ret.url;
+            }
+          });
+        }
+      }
+
+      function fnLoadWares(){
         //现在获取商品列表数据
         var params = {
           fields: {},
@@ -198,13 +227,14 @@
         var now = Date.now();
         var appKey = SHA1("A6921544633372"+"UZ"+"8A7453BA-7B2C-93DE-135A-9D69DDBCDB63"+"UZ"+now)+"."+now;
         api.ajax({
-            url: 'https://d.apicloud.com/mcm/api/ware?filter=' +  $api.jsonToStr(params),
-            method: 'get',
+            url: 'http://d.apicloud.com/mcm/api/ware?filter=' +  $api.jsonToStr(params),
+            method: "get",
             headers: {
               "X-APICloud-AppId": "A6921544633372",  //A6092080221639
               "X-APICloud-AppKey": "2672b5911d8551540c1ea598e01c87fee217a1e5.1482500122476"   //调用其他应用的数据库商品 "2672b5911d8551540c1ea598e01c87fee217a1e5.1482500122476"
             }},
               function(ret, err){
+                api.refreshHeaderLoadDone();
             if (ret) {
               var strTemplate = $api.html(
                 $api.byId("wareTemplate")
@@ -218,7 +248,7 @@
               alert( JSON.stringify( err ) );
             }
         })
-      };;    // ; 的使用是个问题
+      }
   </script>
 
   </html>
