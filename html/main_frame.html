@@ -161,7 +161,7 @@
     <div class="ware">
       <div class="content">
         <!-- <img onload="fnLoadImage(this)" data-url="{{= ware.thumbnail.url }}" class="thumbnail" src="..image/default_rect.png"> -->
-         <img class="thumbnail" src="{{= ware.thumbnail.url }}">  
+         <img class="thumbnail" src="{{= ware.thumbnail.url }}">
         <div class ="info">
           <div class="name">{{= ware.name }}</div>
           <div class="description">{{= ware.description }}</div>
@@ -186,6 +186,17 @@
   <script type="text/javascript" src="../script/SHA1.js"></script>
   <script type="text/javascript">
       apiready = function(){
+        api.addEventListener({
+            name: 'scrolltobottom',
+            extra:{
+              threshold: 300  //距离底部好友多少触发scrolltobottom
+            }
+        }, function(ret, err){
+          //获取更多的商品
+          fnLoadWares(true);
+        });
+
+
         fnLoadWares();
         api.setRefreshHeaderInfo({
           loadingImg:'widget://image/refresh.png',
@@ -213,7 +224,14 @@
         }
       }
 
-      function fnLoadWares(){
+      var skip = 0;
+      var limit = 5;
+      function fnLoadWares(more){
+        if(more){
+          skip += limit;
+        }else{
+          skip = 0;
+        }
         //现在获取商品列表数据
         var params = {
           fields: {},
@@ -221,8 +239,8 @@
             supportAreaId: "56c80e0c789b068408ab5a6f",
             wareTypeId: api.pageParam.wareTypeId
           },
-          skip: 0,
-          limit: 5
+          skip: skip,
+          limit: limit
         };
         var now = Date.now();
         var appKey = SHA1("A6921544633372"+"UZ"+"8A7453BA-7B2C-93DE-135A-9D69DDBCDB63"+"UZ"+now)+"."+now;
@@ -234,20 +252,23 @@
               "X-APICloud-AppKey": "2672b5911d8551540c1ea598e01c87fee217a1e5.1482500122476"   //调用其他应用的数据库商品 "2672b5911d8551540c1ea598e01c87fee217a1e5.1482500122476"
             }},
               function(ret, err){
-                api.refreshHeaderLoadDone();
+
             if (ret) {
-              var strTemplate = $api.html(
-                $api.byId("wareTemplate")
-              );
+              var strTemplate = $api.html($api.byId("wareTemplate"));
               var fnTemplate = doT.template(strTemplate);
               strTemplate = fnTemplate(ret);
               var list = $api.byId("list");
-              $api.html(list,strTemplate);
+              if(more){
+                $api.append(list,strTemplate);
+              }else{
+                $api.html(list,strTemplate);
+              }
+              api.refreshHeaderLoadDone();
             }
             else {
               alert( JSON.stringify( err ) );
             }
-        })
+        });
       }
   </script>
 
