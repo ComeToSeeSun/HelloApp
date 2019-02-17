@@ -119,6 +119,10 @@
         },
           function(ret, err){
         if (ret && ret.userId) {
+          $api.setStorage('userInfo', ret);
+          api.closeToWin({
+            name: 'main'
+          });
             alert( "登录成功！" );
         } else {
             alert( "登录失败！" );
