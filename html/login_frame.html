@@ -123,12 +123,30 @@
           api.closeToWin({
             name: 'main'
           });
-            alert( "登录成功！" );
+          //  alert( "登录成功！" );
         } else {
             alert( "登录失败！" );
         }
     })
   };
+
+      function fnOpenPersonalCenterWin(){
+        var userInfo = $api.getStorage('userInfo');
+        if(userInfo){
+          api.openWin({
+            name: 'personalcenter',
+            url: './personalcenter.html',
+            pageParam: {
+              userId: userInfo.userId
+            }
+          });
+        }else {
+          api.openWin({
+            name: 'login',
+            url: './login.html'
+          });
+        }
+      };
 
       apiready = function(){
       //  $api.fixStatusBar($api.byId('header'));
